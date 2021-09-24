@@ -15,12 +15,16 @@ class WeatherManagementService
         $this->apiKey = $apiKey;
     }
 
-    public function getWeatherFromCity(string $city): Weather {
+    public function getWeatherFromCity(string $city): Weather | null {
         $data = $this->clientService->sendGetRequest('https://api.openweathermap.org/data/2.5/weather',
             ['q' => $city, 'appId' => $this->apiKey], true);
-        $model = new Weather();
-        $model = $model->hydrateFromOpenWeather($data);
-        return $model;
+            if(array_key_exists('weather', $data)) {
+                $model = new Weather();
+                $model = $model->hydrateFromOpenWeather($data);
+                return $model;
+            }else{
+                return null;
+            }
     }
 
 
